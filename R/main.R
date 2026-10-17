@@ -13,3 +13,9 @@ source("donuts.R")
 
 # 1. Exibe a distribuição de alunos por gênero
 gender_donut(studentInfo)
+
+# 2. Exibe a distribuição de alunos por idades
+age_donut(studentInfo)
+
+# 3. Exibe a distribuição de alunos por região
+region_donut(studentInfo)
