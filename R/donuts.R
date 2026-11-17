@@ -125,40 +125,57 @@ region_donut <- function(student_info){
   print(chart)
 }
 
-highest_education_donut <- function(student_info){
+highest_education_donut <- function(student_info) {
   
-  no_educations <- length(unique(student_info$highest_education))
+  # 1. Calcula a frequência de cada nível de escolaridade
+  contagens <- table(student_info$highest_education)
   
-  chart <- ggplot(student_info, aes(x=2, fill=highest_education)) +
-    geom_bar(width=1, color="white", linewidth=0.5) + 
-    # Camada 1: Rótulos internos
-    geom_text(stat="count", 
-              aes(label=ifelse(after_stat(count)>=1000, after_stat(count), "")),
-              position = position_stack(vjust=0.5),
-              color="black", size=4) +
+  # 2. Mapeia os nomes originais para português
+  nomes_pt <- c(
+    "A Level or Equivalent"       = "Ensino médio completo",
+    "HE Qualification"            = "Graduação",
+    "Lower Than A Level"          = "Ensino médio incompleto",
+    "No Formal quals"             = "Sem formação",
+    "Post Graduate Qualification" = "Pós graduação"
+  )
+  
+  # 3. Monta os rótulos dinâmicos no formato "Categoria (Contagem)"
+  valores <- as.numeric(contagens[names(nomes_pt)])
+  valores[is.na(valores)] <- 0
+  
+  rotulos_legenda <- setNames(
+    paste0(nomes_pt, " (", valores, ")"),
+    names(nomes_pt)
+  )
+  
+  no_educations <- length(nomes_pt)
+  
+  chart <- ggplot(student_info, aes(x = 2, fill = highest_education)) +
+    geom_bar(width = 1, color = "white", linewidth = 0.5) +
     
-    # Camada 2: Rótulos externos
-    geom_text(stat="count", 
-              aes(x=2.7, 
-                  label=ifelse(after_stat(count)<1000, after_stat(count), "")),
-              position=position_stack(vjust=0.5),
-              color="black", size=4, check_overlap=TRUE) +
+    # Rótulos internos apenas para as fatias grandes (>= 1000)
+    geom_text(
+      stat = "count",
+      aes(label = ifelse(after_stat(count) >= 1000, after_stat(count), "")),
+      position = position_stack(vjust = 0.5),
+      color = "black",
+      size = 4
+    ) +
     
-    scale_color_identity() +
-    coord_polar("y", start=0) +
-    xlim(0.5, 3.0) + 
+    coord_polar("y", start = 0) +
+    xlim(0.5, 2.6) +
     theme_void() +
-    theme(plot.title=element_text(hjust=0.5)) +
+    theme(plot.title = element_text(hjust = 0.5)) +
     scale_fill_manual(
       values = colorRampPalette(c("lightgray", "steelblue"))(no_educations),
-      labels=c("A Level or Equivalent"="Ensino médio completo", 
-               "HE Qualification"="Graduação", 
-               "Lower Than A Level"="Ensino médio incompleto",
-               "No Formal quals"="Sem formação",
-               "Post Graduate Qualification"="Pós graduação")
+      labels = rotulos_legenda
     ) +
-    guides(fill=guide_legend(override.aes=list(linewidth=1))) +
-    labs(title="Distribuição de Alunos por Nível de Escolaridade", fill="Escolaridade")
+    guides(fill = guide_legend(override.aes = list(linewidth = 1))) +
+    labs(
+      title = "Distribuição de Alunos por Nível de Escolaridade",
+      fill = "Escolaridade"
+    )
+  
   print(chart)
 }
 
