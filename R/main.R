@@ -11,6 +11,9 @@ vle <- fread("data/vle.csv")
 # Carrega os gráficos de rosca
 source("donuts.R")
 
+# Carrega os gráficos de barra
+source("bars.R")
+
 # 1. Exibe a distribuição de alunos por gênero
 gender_donut(studentInfo)
 
@@ -18,7 +21,8 @@ gender_donut(studentInfo)
 age_donut(studentInfo)
 
 # 3. Exibe a distribuição de alunos por região
-region_donut(studentInfo)
+#region_donut(studentInfo)
+region_bar(studentInfo)
 
 # 4. Exibe a distribuição de alunos por nível de escolaridade
 highest_education_donut(studentInfo)
